@@ -10,6 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 class Processor
 {
     private $io;
+    private $isStarted = false;
 
     public function __construct(IOInterface $io)
     {
@@ -144,8 +145,6 @@ class Processor
             return array_replace($expectedParams, $actualParams);
         }
 
-        $isStarted = false;
-
         foreach ($expectedParams as $key => $message) {
             if (is_array($message)) {
                 $actualParams[$key] = $this->getParams(
@@ -155,8 +154,8 @@ class Processor
             } elseif (array_key_exists($key, $actualParams)) {
                 continue;
             } else {
-                if (!$isStarted) {
-                    $isStarted = true;
+                if (!$this->isStarted) {
+                    $this->isStarted = true;
                     $this->io->write('<comment>Some parameters are missing. Please provide them.</comment>');
                 }
 
